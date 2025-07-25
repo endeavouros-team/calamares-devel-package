@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# create user to build as such
+echo "### start building calamares git package"
+echo "%wheel         ALL = (ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
+useradd -m -G wheel -s /bin/bash build
+
+# create path for the build
+# and buildi latest calamares git version
+mkdir /home/build/calamares-git
+chown -R build:build /home/build/calamares-git
+cd /home/build/calamares-git
+sudo -u build wget https://raw.githubusercontent.com/endeavouros-team/PKGBUILDS/master/calamares-git/PKGBUILD
+sudo -u  build makepkg -f
+echo "---- start list packages  /home/build/calamares-git ----"
+ls "/home/build/calamares-git"
+echo "---- end list packages  /home/build/calamares-git ----"
+echo "### end building calamares-git"
