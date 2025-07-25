@@ -1,8 +1,12 @@
 name: build Calamares installer package for EndeavourOS
 
+#on:
+#  schedule:
+#    - cron: '0 7 * * *'
 on:
-  schedule:
-    - cron: '0 7 * * *'
+  repository_dispatch:
+    types: [calamares-changed]
+  # (Other triggers like schedule, push, etc.)
   workflow_dispatch:
 
 jobs:
