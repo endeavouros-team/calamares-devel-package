@@ -2,7 +2,7 @@ name: build Calamares installer package for EndeavourOS
 
 on:
   schedule:
-    - cron: "0 */3 * * *"
+    - cron: "0 9-23/5 * * *"
   workflow_dispatch:
 
 jobs:
