@@ -19,22 +19,24 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Set package name as env
-        run: echo "PKG=$(ls /home/build/calamares-git | grep .pkg.tar.zst)" >> $GITHUB_ENV
                       
       - name: Add EndeavourOS Repo
         run: bash add-EndeavourOS
         
       - name: Build Calamares package
         run: bash calamares-build
+
+      - name: Set package name as env
+        run: echo "PKG=$(ls /home/build/calamares-git | grep .pkg.tar.zst)" >> $GITHUB_ENV
+        
+      - name: test 
+        run: echo "PKG=$(ls /home/build/calamares-git | grep .pkg.tar.zst)"
          
       - name: Upload binaries to release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          repo_token: "${{ secrets.ACCESS_TOKEN }}"
+          repo_token: "${{ secrets.TOKEN_GITHUB }}"
           automatic_release_tag: "latest"
-          prerelease: false
+          prerelease: true
           title: "Calamares EndeavourOS development package ${{ env.PKG }}"
           files: /home/build/calamares-git/${{ env.PKG }}
-          id: "calamares_devel"
