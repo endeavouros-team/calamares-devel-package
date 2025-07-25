@@ -11,7 +11,7 @@ chown -R build:build /home/build/calamares-git
 cd /home/build/calamares-git
 sudo -u build wget https://raw.githubusercontent.com/endeavouros-team/PKGBUILDS/master/calamares-git/PKGBUILD
 sudo -u  build makepkg -f
-echo "---- start list packages  /home/build/calamares-git ----"
+echo "--package--"
 ls "/home/build/calamares-git"
-echo "---- end list packages  /home/build/calamares-git ----"
+echo "--package--"
 echo "### end building calamares-git"
