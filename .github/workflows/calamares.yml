@@ -1,0 +1,40 @@
+name: build Calamares installer package for EndeavourOS
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    permissions:
+      contents: write
+
+    container:
+      image: archlinux:latest
+      options: --privileged
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set package name as env
+        run: echo "PKG=$(ls /home/build/calamares-git | grep .pkg.tar.zst)" >> $GITHUB_ENV
+                      
+      - name: Add EndeavourOS Repo
+        run: bash add-EndeavourOS
+        
+      - name: Build Calamares package
+        run: bash calamares-build
+         
+      - name: Upload binaries to release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.ACCESS_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: "Calamares EndeavourOS development package ${{ env.PKG }}"
+          files: /home/build/calamares-git/${{ env.PKG }}
+          id: "calamares_devel"
