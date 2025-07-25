@@ -29,8 +29,8 @@ jobs:
       - name: Set package name as env
         run: echo "PKG=$(ls /home/build/calamares-git | grep .pkg.tar.zst)" >> $GITHUB_ENV
         
-      - name: test 
-        run: echo "PKG=$(ls /home/build/calamares-git | grep .pkg.tar.zst)"
+      - name: Rename to latest 
+        run: mv /home/build/calamares-git/${{ env.PKG }} /home/build/calamares-git/calamares-git-latest-any.pkg.tar.zst
          
       - name: Upload binaries to release
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -39,4 +39,4 @@ jobs:
           automatic_release_tag: "latest"
           prerelease: true
           title: "Calamares EndeavourOS development package ${{ env.PKG }}"
-          files: /home/build/calamares-git/${{ env.PKG }}
+          files: /home/build/calamares-git/calamares-git-latest-any.pkg.tar.zst
