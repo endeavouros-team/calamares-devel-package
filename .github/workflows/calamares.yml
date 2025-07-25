@@ -38,5 +38,6 @@ jobs:
           repo_token: "${{ secrets.TOKEN_GITHUB }}"
           automatic_release_tag: "latest"
           prerelease: true
-          title: "Calamares EndeavourOS development package ${{ env.PKG }}"
+          title: "Calamares EndeavourOS development package [${{ env.PKG }}]"
           files: /home/build/calamares-git/calamares-git-latest-any.pkg.tar.zst
+          remove_assets: true
