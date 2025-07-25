@@ -45,3 +45,11 @@ jobs:
           title: "Calamares EndeavourOS development package [${{ env.PKG }}]"
           files: /home/build/calamares-git/calamares-git-latest-any.pkg.tar.zst
           remove_assets: true
+
+      - name: Trigger iso-autobuild workflow
+        run: |
+         curl -X POST \
+         -H "Accept: application/vnd.github+json" \
+         -H "Authorization: Bearer ${{ secrets.TOKEN_GITHUB }}" \
+         https://api.github.com/repos/endeavouros-team/iso-autobuild/dispatches \
+         -d '{"event_type": "calamares-done"}'
