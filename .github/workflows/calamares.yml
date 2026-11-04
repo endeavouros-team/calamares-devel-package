@@ -31,17 +31,20 @@ jobs:
         run: bash calamares-build
 
       - name: Set package name as env
-        run: echo "PKG=$(ls /home/build/calamares-git | grep .pkg.tar.zst)" >> $GITHUB_ENV
-        
+        run: |
+          PKG_FILE=$(find /home/build/calamares-git -maxdepth 2 -name "*.pkg.tar.zst" | head -n 1)
+          echo "PKG_PATH=$PKG_FILE" >> $GITHUB_ENV
+          echo "PKG=$(basename "$PKG_FILE")" >> $GITHUB_ENV
+          
       - name: Rename to latest 
-        run: mv /home/build/calamares-git/${{ env.PKG }} /home/build/calamares-git/calamares-git-latest-any.pkg.tar.zst
+        run: mv "${{ env.PKG_PATH }}" /home/build/calamares-git/calamares-git-latest-any.pkg.tar.zst
          
       - name: Upload binaries to release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.TOKEN_GITHUB }}"
           automatic_release_tag: "latest"
-          prerelease: true
+          prerelase: true
           title: "Calamares EndeavourOS development package [${{ env.PKG }}]"
           files: /home/build/calamares-git/calamares-git-latest-any.pkg.tar.zst
           remove_assets: true
