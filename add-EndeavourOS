@@ -20,4 +20,4 @@ reflector --age 2 --number 23 --save /etc/pacman.d/mirrorlist
 eos-rankmirrors —verbose —sort rate
 
 # install dependencies to build calamares
-pacman -S --noconfirm --needed git cmake extra-cmake-modules python-jsonschema python-pyaml python-unidecode gawk qt6-svg qt6-webengine yaml-cpp networkmanager upower kcoreaddons kconfig ki18n kservice kpmcore kwidgetsaddons  squashfs-tools rsync pybind11 cryptsetup doxygen dmidecode gptfdisk hwinfo kparts polkit-qt6 python solid qt6-tools libpwquality ckbcomp qt6-declarative
+pacman -S --noconfirm --needed git cmake extra-cmake-modules python-jsonschema python-pyaml python-unidecode python-toml gawk qt6-svg qt6-webengine yaml-cpp networkmanager upower kcoreaddons kconfig ki18n kservice kpmcore kwidgetsaddons  squashfs-tools rsync pybind11 cryptsetup doxygen dmidecode gptfdisk hwinfo kparts polkit-qt6 python solid qt6-tools libpwquality ckbcomp qt6-declarative
