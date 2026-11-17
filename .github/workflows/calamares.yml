@@ -1,12 +1,8 @@
 name: build Calamares installer package for EndeavourOS
 
-#on:
-#  schedule:
-#    - cron: '0 7 * * *'
 on:
   repository_dispatch:
     types: [calamares-changed]
-  # (Other triggers like schedule, push, etc.)
   workflow_dispatch:
 
 jobs:
@@ -22,37 +18,52 @@ jobs:
       options: --privileged
 
     steps:
-      - uses: actions/checkout@v2
-                      
+      - uses: actions/checkout@v4
+
       - name: Add EndeavourOS Repo
         run: bash add-EndeavourOS
-        
+
       - name: Build Calamares package
         run: bash calamares-build
 
       - name: Set package name as env
         run: |
           PKG_FILE=$(find /home/build/calamares-git -maxdepth 2 -name "*.pkg.tar.zst" | head -n 1)
-          echo "PKG_PATH=$PKG_FILE" >> $GITHUB_ENV
-          echo "PKG=$(basename "$PKG_FILE")" >> $GITHUB_ENV
-          
-      - name: Rename to latest 
-        run: mv "${{ env.PKG_PATH }}" /home/build/calamares-git/calamares-git-latest-any.pkg.tar.zst
-         
+          if [ -z "$PKG_FILE" ] || [ ! -f "$PKG_FILE" ]; then
+            echo "Error: Package file not found!" >&2
+            exit 1
+          fi
+          {
+            echo "PKG_PATH<<EOF"
+            echo "$PKG_FILE"
+            echo "EOF"
+            echo "PKG<<EOF"
+            basename "$PKG_FILE"
+            echo "EOF"
+          } >> "$GITHUB_ENV"
+
+      - name: Rename to latest
+        run: |
+          if [ -z "$PKG_PATH" ] || [ ! -f "$PKG_PATH" ]; then
+            echo "Error: Package file not found!" >&2
+            exit 1
+          fi
+          mv "$PKG_PATH" /home/build/calamares-git/calamares-git-latest-any.pkg.tar.zst
+
       - name: Upload binaries to release
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: "${{ secrets.TOKEN_GITHUB }}"
           automatic_release_tag: "latest"
-          prerelase: true
+          prerelease: true
           title: "Calamares EndeavourOS development package [${{ env.PKG }}]"
           files: /home/build/calamares-git/calamares-git-latest-any.pkg.tar.zst
           remove_assets: true
 
       - name: Trigger iso-autobuild workflow
         run: |
-         curl -X POST \
-         -H "Accept: application/vnd.github+json" \
-         -H "Authorization: Bearer ${{ secrets.TOKEN_GITHUB }}" \
-         https://api.github.com/repos/endeavouros-team/iso-autobuild/dispatches \
-         -d '{"event_type": "calamares-done"}'
+          curl -f -s -S -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.TOKEN_GITHUB }}" \
+            https://api.github.com/repos/endeavouros-team/iso-autobuild/dispatches \
+            -d '{"event_type": "calamares-done"}'
